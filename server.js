@@ -225,13 +225,13 @@ app.get('/', (req, res) => {
         <div class="info-grid">
             <div class="info-card">
                 <h3>📍 服务地址</h3>
-                <p><strong>代理服务：</strong> http://localhost:${config.PORT}</p>
-                <p><strong>管理面板：</strong> http://localhost:${config.PORT}/</p>
+                <p><strong>代理服务：</strong> <span id="proxy-url">正在获取...</span></p>
+                <p><strong>管理面板：</strong> <span id="dashboard-url">正在获取...</span></p>
             </div>
             <div class="info-card">
                 <h3>🔗 使用方法</h3>
                 <p>将 <code>cdn.jsdelivr.net</code> 替换为</p>
-                <p><code>localhost:${config.PORT}</code></p>
+                <p><code id="host-replacement">正在获取...</code></p>
             </div>
             <div class="info-card">
                 <h3>⚙️ 配置信息</h3>
@@ -291,14 +291,46 @@ app.get('/', (req, res) => {
 &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"&gt;
 
 <!-- 通过代理服务器 -->
-&lt;script src="http://localhost:${config.PORT}/npm/vue@3/dist/vue.global.min.js"&gt;&lt;/script&gt;
-&lt;link rel="stylesheet" href="http://localhost:${config.PORT}/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"&gt;
+&lt;script src="<span id="example-js-url">正在获取...</span>"&gt;&lt;/script&gt;
+&lt;link rel="stylesheet" href="<span id="example-css-url">正在获取...</span>"&gt;
             </div>
         </div>
     </div>
 
     <script>
         const baseUrl = window.location.origin;
+
+        // 动态更新页面中的 URL 显示
+        function updateUrlDisplays() {
+            const currentHost = window.location.host;
+            const currentOrigin = window.location.origin;
+            
+            // 更新服务地址显示
+            const proxyUrlElement = document.getElementById('proxy-url');
+            const dashboardUrlElement = document.getElementById('dashboard-url');
+            const hostReplacementElement = document.getElementById('host-replacement');
+            
+            if (proxyUrlElement) {
+                proxyUrlElement.textContent = currentOrigin;
+            }
+            if (dashboardUrlElement) {
+                dashboardUrlElement.textContent = currentOrigin + '/';
+            }
+            if (hostReplacementElement) {
+                hostReplacementElement.textContent = currentHost;
+            }
+            
+            // 更新示例代码中的 URL
+            const exampleJsUrlElement = document.getElementById('example-js-url');
+            const exampleCssUrlElement = document.getElementById('example-css-url');
+            
+            if (exampleJsUrlElement) {
+                exampleJsUrlElement.textContent = currentOrigin + '/npm/vue@3/dist/vue.global.min.js';
+            }
+            if (exampleCssUrlElement) {
+                exampleCssUrlElement.textContent = currentOrigin + '/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css';
+            }
+        }
 
         async function checkServerStatus() {
             const statusDiv = document.getElementById('server-status');
@@ -530,6 +562,7 @@ app.get('/', (req, res) => {
 
         // 页面加载时自动检查状态
         window.onload = function() {
+            updateUrlDisplays(); // 首先更新 URL 显示
             checkServerStatus();
             getCacheStats();
         };
